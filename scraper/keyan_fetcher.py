@@ -27,7 +27,7 @@ class KeyanFetcher:
     def __init__(self, session: requests.Session):
         self.session = session
 
-    def fetch_by_api(self, page: int = 1) -> list[dict]:
+    def fetch_by_api(self, page: int = 1, limit: int = 30) -> list[dict]:
         """
         调用课题列表 JSON 接口，返回原始字典列表。
         """
@@ -41,7 +41,7 @@ class KeyanFetcher:
             "project_status": "",
             "help_money_start": "",
             "help_money_end": "",
-            "limit": 10,
+            "limit": limit,
             "page": page,
             "title": "",
             "user_id": 15494,

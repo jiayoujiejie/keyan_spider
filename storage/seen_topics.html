@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课题抓取记录</title>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        background: #f5f7fa;
+        padding: 30px 20px;
+    }
+    .container {
+        max-width: 1000px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        padding: 24px 30px;
+    }
+    .header h1 {
+        font-size: 22px;
+        font-weight: 600;
+    }
+    .header .count {
+        margin-top: 6px;
+        font-size: 14px;
+        opacity: 0.85;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+    th {
+        background: #f8f9fc;
+        color: #606266;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px 12px;
+        border-bottom: 2px solid #e4e7ed;
+    }
+    td {
+        padding: 12px 12px;
+        font-size: 14px;
+        color: #303133;
+        border-bottom: 1px solid #ebeef5;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    th:nth-child(1), td:nth-child(1) { width: 50px; }
+    th:nth-child(2), td:nth-child(2) { white-space: normal; word-break: break-all; }
+    th:nth-child(3), td:nth-child(3) { width: 75px; }
+    th:nth-child(4), td:nth-child(4) { width: 85px; }
+    th:nth-child(5), td:nth-child(5) { width: 155px; }
+    .table-wrapper {
+        overflow-x: auto;
+    }
+    tr:hover td {
+        background: #f5f7fa;
+    }
+    .title-cell {
+        font-weight: 500;
+    }
+    .empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: #909399;
+        font-size: 15px;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        padding: 20px;
+        flex-wrap: wrap;
+    }
+    .pagination button {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 12px;
+        border: 1px solid #dcdfe6;
+        border-radius: 6px;
+        background: #fff;
+        color: #606266;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .pagination button:hover:not(:disabled) {
+        color: #667eea;
+        border-color: #667eea;
+    }
+    .pagination button.active {
+        background: #667eea;
+        color: #fff;
+        border-color: #667eea;
+    }
+    .pagination button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+    .pagination .info {
+        font-size: 13px;
+        color: #909399;
+        margin: 0 8px;
+    }
+    .footer {
+        text-align: center;
+        padding: 16px;
+        color: #c0c4cc;
+        font-size: 12px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 课题抓取记录</h1>
+        <div class="count">共 33 条已提交课题</div>
+    </div>
+    <div class="table-wrapper">
+    <table>
+        <thead><tr><th>序号</th><th>课题名称</th><th>数据来源</th><th>存入位置</th><th>提交时间</th></tr></thead>
+        <tbody id="table-body"></tbody>
+    </table>
+    </div>
+    <div id="empty-msg" class="empty" style="display:none;">暂无记录</div>
+    <div class="pagination" id="pager"></div>
+    <div class="footer">自动生成 · 每次提交后更新</div>
+</div>
+<script>
+var DATA = [{"no": 1, "title": "关于河北省高端工程机械智能制造重点实验室2026年度开放基金申请工作的通知", "source": "科研人", "destination": "课题小搭子", "marked_at": "2026-04-29 15:29:02"}, {"no": 2, "title": "自治区科技厅关于发布2026年广西科技计划项目申报指南（第五版）的通知", "source": "科研人", "destination": "课题小搭子", "marked_at": "2026-04-29 15:28:59"}, {"no": 3, "title": "自治区科技厅关于征集广西科技“智果”行动计划2027年项目申报指南建议的通知", "source": "科研人", "destination": "课题小搭子", "marked_at": "2026-04-29 15:24:08"}, {"no": 4, "title": "自治区科技厅关于发布2026年广西科技计划“揭榜挂帅”项目（第一批技术攻关类）榜单的通知", "source": "科研人", "destination": "课题小搭子", "marked_at": "2026-04-29 15:24:06"}, {"no": 5, "title": "智能建造与低碳技术泸州市重点实验室开放基金申报指南", "source": "科研人", "destination": "课题小搭子", "marked_at": "2026-04-29 15:24:04"}, {"no": 6, "title": "催化材料制备及应用湖北省重点实验室2026年度开放课题申请", "source": "科研人", "destination": "课题小搭子", "marked_at": "2026-04-29 15:24:01"}, {"no": 7, "title": "关于申报2026年度江苏省科技智库计划项目的通知", "source": "科研人", "destination": "课题小搭子", "marked_at": "2026-04-29 15:23:59"}, {"no": 8, "title": "国家药品监督管理局监管科学创新研究基地（医疗器械）2026年度开放课题申报指南", "source": "https://keyanpro.com/pc/content/reportingGuidelines", "destination": "http://8.137.124.187:5001/crud_manager_modern_v2.html", "marked_at": "2026-04-29 15:17:57"}, {"no": 9, "title": "天津市海洋石油难动用储量开采与低碳负碳重点实验室2026年开放基金公开发布", "source": "https://keyanpro.com/pc/content/reportingGuidelines", "destination": "http://8.137.124.187:5001/crud_manager_modern_v2.html", "marked_at": "2026-04-29 15:17:54"}, {"no": 10, "title": "中华国际医学交流基金会-中华医学会麻醉学分会青年麻醉医师科研基金项目通知", "source": "https://keyanpro.com/pc/content/reportingGuidelines", "destination": "http://8.137.124.187:5001/crud_manager_modern_v2.html", "marked_at": "2026-04-29 15:17:52"}, {"no": 11, "title": "电磁环境效应与光电工程重点实验室2026年度开放项目申请通知", "source": "https://keyanpro.com/pc/content/reportingGuidelines", "destination": "http://8.137.124.187:5001/crud_manager_modern_v2.html", "marked_at": "2026-04-29 15:17:49"}, {"no": 12, "title": "农业农村部杂粮加工重点实验室、国家杂粮加工技术研发分中心2026年度开放基金课题申报公告", "source": "https://keyanpro.com/pc/content/reportingGuidelines", "destination": "http://8.137.124.187:5001/crud_manager_modern_v2.html", "marked_at": "2026-04-29 15:17:47"}, {"no": 13, "title": "广东省科学技术厅关于组织开展2027年度广东省外国专家项目申报工作的通知", "source": "https://keyanpro.com/pc/content/reportingGuidelines", "destination": "http://8.137.124.187:5001/crud_manager_modern_v2.html", "marked_at": "2026-04-29 15:17:44"}, {"no": 14, "title": "江苏省科学技术厅、江苏省财政厅关于印发《2026年度省科技重大专项项目指南》及组织申报项目的通知", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:34"}, {"no": 15, "title": "江苏省科学技术厅、江苏省财政厅关于印发《2026年度省基础研究计划项目指南》及组织申报项目的通知", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:32"}, {"no": 16, "title": "国家能源投资集团有限责任公司关于发布煤炭重大专项2026年度第二批“600MW级机组全流量燃烧后CO₂捕集技术及工程示范”公开项目申报指南的通知", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:29"}, {"no": 17, "title": "关于发布“西安近代化学研究所（含能材料陕西实验室）开放合作创新基金指南（2026）”的通知", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:27"}, {"no": 18, "title": "能源热转换及其过程测控教育部重点实验室2026年度实验室开放基金申请通知", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:24"}, {"no": 19, "title": "天津大学国家地震工程科学中心2026年度开放课题基金指南", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:22"}, {"no": 20, "title": "欢迎申报极端光学技术与仪器全国重点实验室2026年开放课题", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:19"}, {"no": 21, "title": "乳业生物技术国家重点实验室暨农业农村部功能乳品加工重点实验室2026年度开放课题申请指南", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:17"}, {"no": 22, "title": "农业微生物资源发掘与利用全国重点实验室2026年开放课题申请指南", "source": "", "destination": "", "marked_at": "2026-04-29 15:00:14"}, {"no": 23, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 24, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 25, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 26, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 27, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 28, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 29, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 30, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 31, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 32, "title": "", "source": "", "destination": "", "marked_at": ""}, {"no": 33, "title": "", "source": "", "destination": "", "marked_at": ""}];
+var PAGE_SIZE = 20;
+var currentPage = 1;
+var totalPages = Math.ceil(DATA.length / PAGE_SIZE) || 1;
+
+function render() {
+    var tbody = document.getElementById('table-body');
+    var empty = document.getElementById('empty-msg');
+    var pager = document.getElementById('pager');
+    if (DATA.length === 0) {
+        tbody.innerHTML = '';
+        empty.style.display = '';
+        pager.innerHTML = '';
+        return;
+    }
+    empty.style.display = 'none';
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var end = Math.min(start + PAGE_SIZE, DATA.length);
+    var html = '';
+    for (var i = start; i < end; i++) {
+        var r = DATA[i];
+        html += '<tr><td>' + r.no + '</td><td class="title-cell">' + r.title + '</td><td>' + r.source + '</td><td>' + r.destination + '</td><td>' + r.marked_at + '</td></tr>';
+    }
+    tbody.innerHTML = html;
+
+    var btnHtml = '';
+    btnHtml += '<button onclick="goPage(1)" ' + (currentPage === 1 ? 'disabled' : '') + '>首页</button>';
+    btnHtml += '<button onclick="goPage(currentPage - 1)" ' + (currentPage === 1 ? 'disabled' : '') + '>上一页</button>';
+    var startPg = Math.max(1, currentPage - 2);
+    var endPg = Math.min(totalPages, currentPage + 2);
+    for (var p = startPg; p <= endPg; p++) {
+        btnHtml += '<button class="' + (p === currentPage ? 'active' : '') + '" onclick="goPage(' + p + ')">' + p + '</button>';
+    }
+    btnHtml += '<button onclick="goPage(currentPage + 1)" ' + (currentPage === totalPages ? 'disabled' : '') + '>下一页</button>';
+    btnHtml += '<button onclick="goPage(totalPages)" ' + (currentPage === totalPages ? 'disabled' : '') + '>末页</button>';
+    btnHtml += '<span class="info">第 ' + currentPage + ' / ' + totalPages + ' 页</span>';
+    pager.innerHTML = btnHtml;
+}
+
+function goPage(p) {
+    if (p < 1 || p > totalPages) return;
+    currentPage = p;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+render();
+</script>
+</body>
+</html>
